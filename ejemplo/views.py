@@ -2,8 +2,8 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import render
-from ejemplo.models import Familiar
-from ejemplo.forms import Buscar, FamiliarForm # <--- NUEVO IMPORT
+from ejemplo.models import Familiar, Persona, Vuelo
+from ejemplo.forms import Buscar, FamiliarForm, PersonaForm, VueloForm # <--- NUEVO IMPORT
 from django.views import View # <-- NUEVO IMPORT 
 
 def index(request):
@@ -48,6 +48,48 @@ class AltaFamiliar(View):
         if form.is_valid():
             form.save()
             msg_exito = f"se cargo con éxito el familiar {form.cleaned_data.get('nombre')}"
+            form = self.form_class(initial=self.initial)
+            return render(request, self.template_name, {'form':form, 
+                                                        'msg_exito': msg_exito})
+        
+        return render(request, self.template_name, {"form": form})
+
+class AltaPersona(View):
+
+    form_class = PersonaForm
+    template_name = 'ejemplo/alta_persona.html'
+    initial = {"nombre":"", "apellido":"", "numero_documento":""}
+
+    def get(self, request):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form':form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save()
+            msg_exito = f"se cargo con éxito la persona {form.cleaned_data.get('nombre')}"
+            form = self.form_class(initial=self.initial)
+            return render(request, self.template_name, {'form':form, 
+                                                        'msg_exito': msg_exito})
+        
+        return render(request, self.template_name, {"form": form})
+
+class AltaVuelo(View):
+
+    form_class = VueloForm
+    template_name = 'ejemplo/alta_vuelo.html'
+    initial = {"aeropuerto_salida":"", "aeropuerto_destino":"", "numero_vuelo":""}
+
+    def get(self, request):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form':form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save()
+            msg_exito = f"se cargo con éxito el vuelo {form.cleaned_data.get('numero_vuelo')}"
             form = self.form_class(initial=self.initial)
             return render(request, self.template_name, {'form':form, 
                                                         'msg_exito': msg_exito})
